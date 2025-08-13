@@ -1,0 +1,209 @@
+---
+ProjectName: "sidecar-redfish"
+Manufacturer: &mainManufacturer "Supermicro"
+PowerSubsystem:
+  CapacityWatts: 350
+  Allocation:
+    AllocatedWatts: 80.0
+    RequestedWatts: 90.0
+PowerSupplies:
+  "1":
+    RestName: "power24v1"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-240-24"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 240
+    PowerSupplyType: "AC"
+
+  "2":
+    RestName: "power24v2"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-240-24"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 240
+    PowerSupplyType: "AC"
+
+  "3":  
+    RestName: "power12v1"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-120-12"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 120
+    PowerSupplyType: "AC"  
+
+  "4":
+    RestName: "power12v2" 
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-120-12"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 120
+    PowerSupplyType: "AC"
+Pumps:
+  "1":
+    AllowableMax: 100
+    AllowableMin: 15
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Pump 1 is located at the bottom left of the CDU"
+
+  "2":
+    AllowableMax: 100
+    AllowableMin: 15
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Pump 2 is located at the bottom center of the CDU"
+
+  "3":
+    AllowableMax: 100
+    AllowableMin: 15
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Pump 3 is located at the bottom right of the CDU"
+Fans:
+  "1":
+    AllowableMax: 100
+    AllowableMin: 15
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Bottom Right"
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Fan 1 is located at the bottom right of the CDU"
+
+  "2":
+    AllowableMax: 100
+    AllowableMin: 15
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Middle Right"
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Fan 2 is located at the middle right of the CDU"
+
+  "3":
+    AllowableMax: 100
+    AllowableMin: 15
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Top Right"
+    "Location":
+      "PartLocation":  
+        ServiceLabel: "Fan 3 is located at the top right of the CDU"    
+
+  "4":
+    AllowableMax: 100
+    AllowableMin: 15
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Top Left"
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Fan 4 is located at the top left of the CDU"    
+
+  "5":
+    AllowableMax: 100
+    AllowableMin: 15    
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Middle Left"
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Fan 5 is located at the middle left of the CDU" 
+
+  "6":
+    AllowableMax: 100
+    AllowableMin: 15
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Bottom Left"
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Fan 6 is located at the bottom left of the CDU" 
+"Filters":
+  "1":
+    RatedServiceHours: 4320
+    ServicedDate: 2025-06-06T04:11:00Z
+    HotPluggable: true
+    "Location":
+      "Placement":
+        Row: "North 1"
+      "PartLocation":
+        ServiceLabel: "Filter 1"
+        LocationType: "Bay"  
+"leak_detectors":
+  "Device1":
+    RestName: "leak_detector"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "Leak Detector 1"
+        LocationType: "Bay"
+  "Rack1":
+    RestName: "rack_leak_detector_1"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 1"
+        LocationType: "Bay"
+  "Rack2":
+    RestName: "rack_leak_detector_2"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 2"
+        LocationType: "Bay"
+CDU:
+  Manufacturer: *mainManufacturer
+  Model: 200KW SideCar L/A Colling CDU
+  SerialNumber: KD027-0001 #後面抓webUI SN填入
+  PartNumber: LCS-SCDU-200AR001
+  FirmwareVersion: ""
+  Version: ""
+  CoolingCapacityWatts: 200000
+  ChassisType: Sidecar
+
+PrimaryCoolantConnectors:
+  "methods": ["get", "patch"]
+  "1":
+    RatedFlowLitersPerMinute: 1000
+    Coolant:
+        CoolantType: "Water"
+        DensityKgPerCubicMeter: 1030
+        SpecificHeatkJoulesPerKgK: 3900
+    CoolantConnectorType: "Pair"
+    "Sensors":
+      PrimaryFlowLitersPerMinute: FlowLitersPerMinute
+      PrimaryHeatRemovedkW: HeatRemovedkW
+      PrimarySupplyTemperatureCelsius: SupplyTemperatureCelsius 
+      PrimaryReturnTemperatureCelsius: ReturnTemperatureCelsius
+      PrimaryDeltaTemperatureCelsius: DeltaTemperatureCelsius
+      PrimarySupplyPressurekPa: SupplyPressurekPa
+      PrimaryReturnPressurekPa: ReturnPressurekPa
+      PrimaryDeltaPressurekPa: DeltaPressurekPa

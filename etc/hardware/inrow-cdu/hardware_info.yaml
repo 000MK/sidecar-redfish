@@ -1,0 +1,243 @@
+---
+ProjectName: "inrow-cdu"
+Manufacturer: &mainManufacturer "Supermicro"
+PowerSubsystem:
+  CapacityWatts: 41500
+  Allocation:
+    AllocatedWatts: 22500
+    RequestedWatts: 20000
+PowerSupplies:
+  "1":
+    RestName: "power24v1"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-480-24"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 240
+    PowerSupplyType: "AC"
+
+  "2":
+    RestName: "power24v2"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-480-24"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 240
+    PowerSupplyType: "AC"
+
+  "3":
+    RestName: "power12v1"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-120-12"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 120
+    PowerSupplyType: "AC"
+
+  "4":
+    RestName: "power12v2"
+    FirmwareVersion: "0"
+    HotPluggable: false
+    InputNominalVoltageType: "AC400V" 
+    Manufacturer: *mainManufacturer
+    PartNumber: "WDR-120-12"
+    # SerialNumber: "TBD"
+    PowerCapacityWatts: 120
+    PowerSupplyType: "AC"
+  # "3":  
+  #   RestName: "power12v1"
+  #   FirmwareVersion: "0"
+  #   HotPluggable: false
+  #   InputNominalVoltageType: "AC400V" 
+  #   Manufacturer: *mainManufacturer
+  #   PartNumber: "WDR-120-12"
+  #   # SerialNumber: "TBD"
+  #   PowerCapacityWatts: 120
+  #   PowerSupplyType: "AC"  
+
+  # "4":
+  #   RestName: "power12v2" 
+  #   FirmwareVersion: "0"
+  #   HotPluggable: false
+  #   InputNominalVoltageType: "AC400V" 
+  #   Manufacturer: *mainManufacturer
+  #   PartNumber: "WDR-120-12"
+  #   # SerialNumber: "TBD"
+  #   PowerCapacityWatts: 120
+  #   PowerSupplyType: "AC"
+Pumps:
+  "1":
+    AllowableMax: 100
+    AllowableMin: 25
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Pump 1 is located at the bottom left of the CDU"
+
+  "2":
+    AllowableMax: 100
+    AllowableMin: 25
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Pump 2 is located at the bottom center of the CDU"
+
+"Valves":
+  "1":
+    AllowableMax: 100
+    AllowableMin: 0
+    PhysicalContext: "Chassis"
+    PartNumber: "578-5010007"
+    Manufacturer: *mainManufacturer
+    Model: "K3G310-PV69-03-42"
+    SparePartNumber: "SPN-FAN-100"
+    LocatedAt: "Bottom Right"
+    "Location":
+      "PartLocation": 
+        ServiceLabel: "Fan 1 is located at the bottom right of the CDU"
+
+"Filters":
+  "1":
+    RatedServiceHours: 4320
+    ServicedDate: 2025-06-06T04:11:00Z
+    HotPluggable: true
+    "Location":
+      "Placement":
+        Row: "North 1"
+      "PartLocation":
+        ServiceLabel: "Filter1 (in SecondaryCoolantConnector)"
+        LocationType: "Bay"  
+  "2":
+    RatedServiceHours: 4320
+    ServicedDate: 2025-06-06T04:11:00Z
+    HotPluggable: true
+    "Location":
+      "Placement":
+        Row: "North 1"
+      "PartLocation":
+        ServiceLabel: "Filter2 (in PrimaryCoolantConnector)"
+        LocationType: "Bay"  
+  "3":
+    RatedServiceHours: 4320
+    ServicedDate: 2025-06-06T04:11:00Z
+    HotPluggable: true
+    "Location":
+      "Placement":
+        Row: "North 1"
+      "PartLocation":
+        ServiceLabel: "Filter3 (in SecondaryCoolantConnector)"
+        LocationType: "Bay"
+  "4":
+    RatedServiceHours: 4320
+    ServicedDate: 2025-06-06T04:11:00Z
+    HotPluggable: true
+    "Location":
+      "Placement":
+        Row: "North 1"
+      "PartLocation":
+        ServiceLabel: "Filter4 (in SecondaryCoolantConnector)"
+        LocationType: "Bay"
+  "5":
+    RatedServiceHours: 4320
+    ServicedDate: 2025-06-06T04:11:00Z
+    HotPluggable: true
+    "Location":
+      "Placement":
+        Row: "North 1"
+      "PartLocation":
+        ServiceLabel: "Filter5 (in SecondaryCoolantConnector)"
+        LocationType: "Bay"
+"leak_detectors":
+  "Device1":
+    RestName: "leak_detector"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "Leak Detector 1"
+        LocationType: "Bay"
+  "Rack1":
+    RestName: "rack_leak_detector_1"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 1"
+        LocationType: "Bay"
+  "Rack2":
+    RestName: "rack_leak_detector_2"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 2"
+        LocationType: "Bay"
+  "Rack3":
+    RestName: "rack_leak_detector_3"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 3"
+        LocationType: "Bay"
+  "Rack4":
+    RestName: "rack_leak_detector_4"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 4"
+        LocationType: "Bay"
+  "Rack5":
+    RestName: "rack_leak_detector_5"
+    "Location":
+      "PartLocation":
+        ServiceLabel: "rack Leak Detector 5"
+        LocationType: "Bay"
+CDU:
+  Manufacturer: *mainManufacturer
+  Model: 1.8mW InRow CDU
+  # SerialNumber: KD027-0001 #後面抓webUI SN填入
+  PartNumber: LCS-SCDU-1K3LR001
+  FirmwareVersion: ""
+  Version: ""
+  CoolingCapacityWatts: 1800000
+  ChassisType: Row
+  #  ['Rack', 'Blade', 'Enclosure', 'StandAlone', 'RackMount', 'Card', 'Cartridge', 'Row', 'Pod', 'Expansion', 'Sidecar', 'Zone', 'Sled', 'Shelf', 'Drawer', 'Module', 'Component', 'IPBasedDrive', 'RackGroup', 'StorageEnclosure', 'ImmersionTank', 'HeatExchanger', 'PowerStrip', 'Other']
+
+PrimaryCoolantConnectors:
+  "methods": ["get"]
+  "1":
+    patch: false
+    RatedFlowLitersPerMinute: 1000
+    Coolant:
+        CoolantType: "Water"
+        DensityKgPerCubicMeter: 1030
+        SpecificHeatkJoulesPerKgK: 3900
+    CoolantConnectorType: "Pair"
+    "Sensors":
+      PrimaryFlowLitersPerMinute: FlowLitersPerMinute
+      PrimarySupplyTemperatureCelsius: SupplyTemperatureCelsius 
+      PrimaryReturnTemperatureCelsius: ReturnTemperatureCelsius
+      PrimaryDeltaTemperatureCelsius: DeltaTemperatureCelsius
+      PrimarySupplyPressurekPa: SupplyPressurekPa
+      PrimaryReturnPressurekPa: ReturnPressurekPa
+      PrimaryDeltaPressurekPa: DeltaPressurekPa
+
+
+SecondaryCoolantConnectors:
+  "1":
+    RatedFlowLitersPerMinute: 1000
+    Coolant:
+        CoolantType: "Water"
+        DensityKgPerCubicMeter: 1030
+        SpecificHeatkJoulesPerKgK: 3900
+    CoolantConnectorType: "Pair"
+    "Sensors":
+      PrimaryWaterFlowRate : FlowLitersPerMinute
+      PrimarySupplyWaterTemperature: SupplyTemperatureCelsius
+      PrimaryReturnWaterTemperatureCelsius: ReturnTemperatureCelsius
+      PrimaryWaterDeltaTemperatureCelsius: DeltaTemperatureCelsius
+      PrimarySupplyWaterPressurekPa: SupplyPressurekPa
+      PrimaryReturnWaterPressurekPa: ReturnPressurekPa
+      PrimaryWaterDeltaPressurekPa: DeltaPressurekPa
+      PrimaryHeatRemovedkW : HeatRemovedkW
+      
+
+Controls:
+  "ChillerSupplyValve1":      
+    RestAPIName: "PV1"

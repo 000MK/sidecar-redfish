@@ -1,0 +1,54 @@
+ProjectName: "sidecar-redfish"
+
+id_readingInfo_map:
+  "PrimaryFlowLitersPerMinute":
+    ReadingUnits: "L/min"
+    fieldNameToFetchSensorValue: "coolant_flow_rate"
+  "PrimaryHeatRemovedkW":
+    ReadingUnits: "kW"
+    fieldNameToFetchSensorValue: "heat_capacity"
+  "PrimarySupplyTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_supply"
+  "PrimaryReturnTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_return"
+  "PrimaryDeltaTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_supply,temp_coolant_return"
+  "PrimarySupplyPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_supply"
+  "PrimaryReturnPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_return"
+  "PrimaryDeltaPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_supply,pressure_coolant_return"
+  "TemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temperature_ambient"
+  "DewPointCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temperature_dew_point"
+  "HumidityPercent":
+    ReadingUnits: "Percent"
+    fieldNameToFetchSensorValue: "humidity_relative"
+  "WaterPH":
+    ReadingUnits: "pH"
+    fieldNameToFetchSensorValue: "ph_level"
+  "Conductivity":
+    ReadingUnits: "μs/cm"
+    fieldNameToFetchSensorValue: "conductivity"
+  "Turbidity":
+    ReadingUnits: "NTU"
+    fieldNameToFetchSensorValue: "turbidity"
+  "PowerConsume":
+    ReadingUnits: "kW"
+    fieldNameToFetchSensorValue: "power_total"
+  "EnergykWh":
+    ReadingUnits: "kWh"
+    fieldNameToFetchSensorValue: "EnergykWh"
+
+
+

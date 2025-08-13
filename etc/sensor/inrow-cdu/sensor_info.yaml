@@ -1,0 +1,114 @@
+ProjectName: "inrow-cdu"
+
+id_readingInfo_map:
+  "PrimaryFlowLitersPerMinute":
+    ReadingUnits: "L/min"
+    fieldNameToFetchSensorValue: "coolant_flow_rate"
+  "PrimarySupplyTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_supply"
+  "PrimaryReturnTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_return" 
+  "PrimarySupplyPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_supply"
+  "PrimaryReturnPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_return"
+  "PrimaryDeltaPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_supply,pressure_coolant_return"
+  "PrimaryDeltaTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_supply,temp_coolant_return"  
+  "TemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temperature_ambient"
+  "HumidityPercent":
+    ReadingUnits: "Percent"
+    fieldNameToFetchSensorValue: "relative_humidity"
+  "DewPointCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temperature_dew_point"
+  "Conductivity":
+    ReadingUnits: "μs/cm"
+    fieldNameToFetchSensorValue: "conductivity"
+  "Turbidity":
+    ReadingUnits: "NTU"
+    fieldNameToFetchSensorValue: "turbidity"
+  "PrimaryHeatRemovedkW":
+    ReadingUnits: "kW"
+    fieldNameToFetchSensorValue: "heat_capacity"
+  "PrimarySupplyWaterTemperature":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_water_in"
+  "PrimaryReturnWaterTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_water_out"
+  "PrimarySupplyWaterPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_water_in"
+  "PrimaryReturnWaterPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_water_out"
+  "PrimaryWaterFlowRate":
+    ReadingUnits: "L/min"
+    fieldNameToFetchSensorValue: "water_flow_rate"
+  "PH":
+    ReadingUnits: "pH"
+    fieldNameToFetchSensorValue: "ph_level"
+  "PrimaryInstantPowerConsumption":
+    ReadingUnits: "kW"
+    fieldNameToFetchSensorValue: "power_total"
+  "AverageCurrent":
+    ReadingUnits: "A"
+    fieldNameToFetchSensorValue: "average_current"
+  "PrimaryFilterInletPressure":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_filter_in"
+  "PrimaryF1OutPressure":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_filter_1_out"
+  "PrimaryF2OutPressure":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_filter_2_out"
+  "PrimaryF3OutPressure":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_filter_3_out"
+  "PrimaryF4OutPressure":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_filter_4_out"
+  "PrimaryF5OutPressure":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_filter_5_out"
+  "PrimaryWaterDeltaTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_water_in,temp_water_out" 
+  "PrimaryWaterDeltaPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_water_in,pressure_water_out"  
+    
+id_readingInfo_spare:
+  "PrimarySupplyTemperatureCelsius":
+    ReadingUnits: "Celsius"
+    fieldNameToFetchSensorValue: "temp_coolant_supply"
+  "PrimarySupplyPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_supply"
+  "PrimaryReturnPressurekPa":
+    ReadingUnits: "kPa"
+    fieldNameToFetchSensorValue: "pressure_coolant_return"
+# leak_detectors:
+#   "Device1":
+#     fieldNameToFetchSensorValue: "leak_detector"
+#   "Rack1":
+#     fieldNameToFetchSensorValue: "rack_leak_detector_1"  
+#   "Rack2":
+#     fieldNameToFetchSensorValue: "rack_leak_detector_2"
+#   "Rack3":
+#     fieldNameToFetchSensorValue: "rack_leak_detector_3"
+#   "Rack4":
+#     fieldNameToFetchSensorValue: "rack_leak_detector_4"
+#   "Rack5":
+#     fieldNameToFetchSensorValue: "rack_leak_detector_5"    
