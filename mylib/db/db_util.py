@@ -1,6 +1,7 @@
 from werkzeug.security import generate_password_hash
 from mylib.models.account_model import RoleModel, AccountModel
 from mylib.models.setting_model import SettingModel
+from mylib.models.telemetry_service_model import TelemetryServiceModel
 from mylib.models.setting_subscriptions_model import SubscriptionModel
 import sqlalchemy as sa
 from load_env import redfish_info

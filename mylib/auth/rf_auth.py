@@ -50,6 +50,7 @@ resource_type_cache = {
     "/redfish/v1/AccountService": "AccountService",
     "/redfish/v1/SessionService": "SessionService",
     "/redfish/v1/SessionService/Sessions": "SessionCollection",
+    "/redfish/v1/Managers/CDU/EthernetInterfaces": "EthernetInterfaceCollection",
     "/redfish/v1/Managers/CDU/EthernetInterfaces/<string:ethernet_interfaces_id>": "EthernetInterface",
     "/redfish/v1/Managers/CDU": "Manager",
     "/redfish/v1/Managers": "ManagerCollection",
@@ -252,7 +253,7 @@ def _check_op_map_privilege(op_map, method, user_name, usr_privilege, resource_t
     if not method_priv_list or not isinstance(method_priv_list, list):
         print(f" * No privilege list found for method: {method} in resource type: {resource_type}")
         if ori_op_map:
-            return _check_op_map_privilege(ori_op_map, method, usr_privilege, resource_type, fields)
+            return _check_op_map_privilege(ori_op_map, method, user_name, usr_privilege, resource_type, fields)
         return True
     for priv_dict in method_priv_list: # or rule
         priv_list = priv_dict.get("Privilege", [])

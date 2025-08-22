@@ -2,7 +2,8 @@
 import os
 import time
 import threading
-from typing import List, Dict, Any
+import re
+from typing import List, Dict, Any, Optional
 from collections import deque, defaultdict
 from datetime import datetime, timezone, timedelta
 from cachetools import cached, TTLCache
@@ -24,6 +25,8 @@ from mylib.models.rf_metric_report_definition_model import (
     RfMetricReportDefinitionType,
     RfReportUpdatesEnum,
 )
+from mylib.adapters.PostgresAdapter import PostgresAdapter
+
 
 
 class RfTelemetryService(BaseService):
@@ -318,3 +321,282 @@ class RfTelemetryService(BaseService):
             m.ReportUpdates = RfReportUpdatesEnum.AppendWrapsWhenFull
 
             return m.to_dict()
+
+    def parse_iso_duration_to_seconds(self, duration: str) -> int:
+        """
+        Args:
+            duration: ISO 8601 duration string (e.g., "PT10S")
+            
+        Returns:
+            int: Total seconds
+        """
+        
+        pattern = r'P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?'
+        match = re.match(pattern, duration)
+        
+        if not duration.startswith('P'):
+            raise ValueError("Duration must start with 'P'")
+        
+        if not match:
+            raise ValueError(f"Invalid ISO 8601 duration format: {duration}")
+        
+        days, hours, minutes, seconds = match.groups()
+    
+        total_seconds = 0
+        if days:
+            total_seconds += int(days) * 24 * 3600
+        if hours:
+            total_seconds += int(hours) * 3600
+        if minutes:
+            total_seconds += int(minutes) * 60
+        if seconds:
+            total_seconds += float(seconds)
+        
+        return int(total_seconds)
+    
+    def get_all_numeric_fields(self) -> list[str]:
+        
+        metrics, _ = self.load_metric_definitions()
+            
+        excluded_fields = {'id', 'time', 'mode_selection'}
+        numeric_field_names = []
+        
+        for metric in metrics:
+            field_name = metric.get("FieldName")
+            print("field_name: ", field_name)
+            metric_data_type = metric.get("MetricDataType", "").lower()
+            
+            if (field_name and field_name not in excluded_fields and metric_data_type in ['Integer','Decimal']):
+                numeric_field_names.append(field_name)
+        
+        return numeric_field_names
+
+    def get_sensor_statistics(self, queries: list[dict], mode: str = "recent", end_time: Optional[datetime] = None) -> dict:
+        
+        if not queries:
+            raise ValueError("At least one query configuration is required")
+            
+        if end_time is None:
+            end_time = datetime.now(timezone.utc)
+        
+        self.db = PostgresAdapter(dbname=os.getenv("PROJ_NAME", "").replace("-", "_"))
+        
+        if mode != "recent":
+            raise ValueError("Currently only 'recent' mode is supported")
+        
+        all_numeric_fields = self.get_all_numeric_fields()
+        if not all_numeric_fields:
+            raise ValueError("No numeric fields found in sensor_data table")
+        
+        duration_time_intervals = {}
+        max_time_interval = 0
+        
+        for query in queries:
+            duration = query.get("duration", "PT10S")
+            fields = query.get("fields", [])
+            stats = query["stats"]
+            
+            if not fields:
+                query["fields"] = all_numeric_fields.copy()
+                fields = query["fields"]
+        
+            if duration not in duration_time_intervals:
+                time_interval = self.parse_iso_duration_to_seconds(duration)
+                if time_interval <= 0:
+                    raise ValueError(f"Duration {duration} must be positive")
+                if time_interval > 300:
+                    raise ValueError(f"Duration {duration} must not exceed 300 seconds (PT5M)")
+                duration_time_intervals[duration] = time_interval
+                max_time_interval = max(max_time_interval, time_interval)
+            
+            invalid_fields = [field for field in fields if field not in all_numeric_fields]
+            if invalid_fields:
+                raise ValueError(f"Invalid fields: {invalid_fields}. Available fields: {all_numeric_fields}")
+            
+            if not stats:
+                raise ValueError("Stats list cannot be empty")
+            
+            for stat in stats:
+                try:
+                    RfCalculationAlgorithmEnum(stat)
+                except ValueError:
+                    valid_algorithms = [e.value for e in RfCalculationAlgorithmEnum]
+                    raise ValueError(f"stat_type must be one of {valid_algorithms}")
+                
+        params = {"end_time": end_time, "max_time_interval": max_time_interval}
+                
+        subquery_columns = []
+        result_mapping = []
+        
+        for query in queries:
+            duration = query.get("duration", "PT10S")
+            fields = query.get("fields", [])
+            stats = query["stats"]
+            time_interval = duration_time_intervals[duration]
+            
+            for field in fields:
+                for stat in stats:
+                    if stat == "Average":
+                        subquery = f"""
+                        (SELECT ROUND(AVG({field})::numeric, 2) 
+                        FROM data_source 
+                        WHERE "time"::timestamptz >= (%(end_time)s::timestamptz - INTERVAL '{time_interval} seconds')) 
+                        as {field}_{stat.lower()}_{duration}"""
+                        
+                    elif stat == "Maximum":
+                        subquery = f"""
+                        (SELECT ROUND(MAX({field})::numeric, 2) 
+                        FROM data_source 
+                        WHERE "time"::timestamptz >= (%(end_time)s::timestamptz - INTERVAL '{time_interval} seconds')) 
+                        as {field}_{stat.lower()}_{duration}"""
+                        
+                    elif stat == "Minimum":
+                        subquery = f"""
+                        (SELECT ROUND(MIN({field})::numeric, 2) 
+                        FROM data_source 
+                        WHERE "time"::timestamptz >= (%(end_time)s::timestamptz - INTERVAL '{time_interval} seconds')) 
+                        as {field}_{stat.lower()}_{duration}"""
+                        
+                    elif stat == "Summation":
+                        subquery = f"""
+                        (SELECT ROUND(SUM({field})::numeric, 2) 
+                        FROM data_source 
+                        WHERE "time"::timestamptz >= (%(end_time)s::timestamptz - INTERVAL '{time_interval} seconds')) 
+                        as {field}_{stat.lower()}_{duration}"""
+                    
+                    subquery_columns.append(subquery)
+                    result_mapping.append({
+                        "field": field,
+                        "stat": stat,
+                        "duration": duration,
+                        "column_name": f"{field}_{stat.lower()}_{duration}"
+                    })
+        
+        sql = f"""
+        WITH data_source AS (
+            SELECT * 
+            FROM sensor_data 
+            WHERE "time"::timestamptz >= (%(end_time)s::timestamptz - INTERVAL '{max_time_interval} seconds')
+            AND "time"::timestamptz < %(end_time)s::timestamptz
+            ORDER BY "time" DESC 
+        )
+        SELECT 
+            {','.join(subquery_columns)}
+        """
+        
+        try:
+            with self.db.get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql, params)
+                    row = cur.fetchone()
+        except Exception as e:
+            raise ValueError(f"Database query failed: {str(e)}")
+        
+        result = []
+        
+        if row:
+            for i, mapping in enumerate(result_mapping):
+                stat_value = row[i]
+                if stat_value is not None:
+                    result.append({
+                        "resource": "SensorStatistics",
+                        "metric_id": mapping["field"],
+                        "property": f"{mapping['stat']}_{mapping['duration']}",
+                        "value": str(float(stat_value))
+                    })
+            return result
+        
+        """
+        else:  # aligned mode
+            query = queries[0]
+            duration = query["duration"]
+            fields = query["fields"]
+            stats = query["stats"]
+            time_interval = duration_time_intervals[duration]
+            
+            stat_columns = []
+            for field in fields:
+                for stat in stats:
+                    if stat == "Average":
+                        stat_columns.append(f"COALESCE(ROUND(AVG({field})::numeric, 2), 0) as avg_{field}")
+                    elif stat == "Maximum":
+                        stat_columns.append(f"COALESCE(ROUND(MAX({field})::numeric, 2), 0) as max_{field}")
+                    elif stat == "Minimum":
+                        stat_columns.append(f"COALESCE(ROUND(MIN({field})::numeric, 2), 0) as min_{field}")
+                    elif stat == "Summation":
+                        stat_columns.append(f"COALESCE(ROUND(SUM({field})::numeric, 2), 0) as sum_{field}")
+            
+            sql = f'''
+            WITH data_source AS (
+                SELECT * 
+                FROM sensor_data 
+                WHERE "time" < %(end_time)s::timestamptz
+            ),
+            data_time_range AS (
+                SELECT 
+                    MIN("time") as min_time,
+                    MAX("time") as max_time
+                FROM data_source
+            ),
+            time_buckets AS (
+                SELECT 
+                    generate_series(
+                        (SELECT min_time FROM data_time_range),
+                        (SELECT max_time FROM data_time_range),
+                        make_interval(secs => %(time_interval)s)
+                    ) AS bucket_start
+                LIMIT 2048
+            ),
+            bucket_ranges AS (
+                SELECT 
+                    bucket_start AS start_time,
+                    bucket_start + make_interval(secs => %(time_interval)s) AS end_time
+                FROM time_buckets
+            ),
+            filtered AS (
+                SELECT 
+                    bucket_ranges.start_time,
+                    bucket_ranges.end_time,
+                    data_source.*
+                FROM bucket_ranges
+                LEFT JOIN data_source ON data_source."time" >= bucket_ranges.start_time 
+                AND data_source."time" < bucket_ranges.end_time
+            )
+            SELECT  
+                start_time, 
+                end_time, 
+                {", ".join(stat_columns)}
+            FROM filtered 
+            GROUP BY start_time, end_time 
+            ORDER BY start_time
+            LIMIT 2048;
+            '''
+
+            params["time_interval"] = int(time_interval)
+            try:
+                with self.db.get_connection() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute(sql, params)
+                        rows = cur.fetchall()
+            except Exception as e:
+                raise ValueError(f"Database query failed: {str(e)}")
+            
+            buckets = []
+            for row in rows:
+                bucket = {
+                    "time": f"{row[0].strftime('%H:%M:%S')}-{row[1].strftime('%H:%M:%S')}"
+                }
+                data_index = 2
+                for field in fields:
+                    if len(stats) == 1:
+                        bucket[field] = float(row[data_index]) if row[data_index] is not None else 0.0
+                        data_index += 1
+                    else:
+                        bucket[field] = {}
+                        for stat in stats:
+                            bucket[field][stat] = float(row[data_index]) if row[data_index] is not None else 0.0
+                            data_index += 1
+                buckets.append(bucket)
+                
+            return {"buckets": buckets}
+        """

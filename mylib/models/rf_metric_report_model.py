@@ -9,13 +9,17 @@ from pydantic import (
     field_validator,
 )
 from mylib.models.rf_base_model import RfResourceBaseModel, RfResourceCollectionBaseModel
+from mylib.models.rf_metric_definition_model import RfMetricDefinitionModel
 
 class RfActions(BaseModel):
     # Oem: Optional[RfOemActions] = Field(default=None) # why fail?
     Oem: Optional[Dict[str, Any]] = Field(default=None)
 
 class RfMetricValue(BaseModel):
-    MetricDefinition: Optional[Dict[str, Any]] = Field(default=None)  
+    """
+    @see https://redfish.dmtf.org/schemas/v1/MetricReport.v1_5_2.json#/definitions/MetricValue
+    """
+    MetricDefinition: Optional[RfMetricDefinitionModel] = Field(default=None) # MetricDefinition: Optional[Dict[str, Any]] = Field(default=None)  
     MetricId: Optional[str] = Field(default=None)
     MetricProperty: Optional[str] = Field(default=None)
     MetricValue: Optional[str] = Field(default=None)

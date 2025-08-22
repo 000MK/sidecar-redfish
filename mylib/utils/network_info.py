@@ -1,5 +1,6 @@
 import psutil
 from mylib.models.setting_model import SettingModel
+import ast
 
 def get_network_protocol_status():
     """
@@ -56,6 +57,13 @@ def get_network_protocol_status():
         dhcp_port = dhcp_cli_port
     else:
         dhcp_port = 0
+    
+    # 轉換 ntp_server str to list
+    t_raw = SettingModel().get_by_key("Managers.NTP.NTPServer").value
+    try:
+        t = ast.literal_eval(t_raw) if isinstance(t_raw, str) else t_raw
+    except Exception:
+        t = []
 
     result = {
         "HTTPEnabled":        http_enabled,
@@ -72,7 +80,7 @@ def get_network_protocol_status():
         # 指定一個
         "NTPEnabled":         ntp_enabled,
         "NTPPort":            protocol_ports["NTP"],
-        "NTPServers":         [str(SettingModel().get_by_key(f"Managers.NTP.NTPServer").value)],
+        "NTPServers":         t,
 
         # 只要false
         "DHCPEnabled":        dhcp_enabled,

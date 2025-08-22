@@ -181,13 +181,13 @@ class RfManagersService(BaseService):
     
     # (時區問題 夏令、冬令 有些地區會差1小時)
     def patch_managers(self, cdu_id, body):
-        # DateTime = body.get("DateTime", None)
-        # DateTimeLocalOffset = body.get("DateTimeLocalOffset", None)
+        DateTime = body.get("DateTime", None)
+        DateTimeLocalOffset = body.get("DateTimeLocalOffset", None)
         ServiceIdentification = body.get("ServiceIdentification", None)
         
         try:
-            # if DateTime is not None or DateTimeLocalOffset is not None:
-            #     self.apply_system_time(DateTime, DateTimeLocalOffset)
+            if DateTime is not None or DateTimeLocalOffset is not None:
+                self.apply_system_time(DateTime, DateTimeLocalOffset)
             self.save_manager_setting("ServiceIdentification", ServiceIdentification)
             
             return {"message": "Manager settings updated successfully"}, 200
@@ -224,11 +224,11 @@ class RfManagersService(BaseService):
             ntp_setting = {
                 "ProtocolEnabled": ntp_ProtocolEnabled,
                 "Port": 123,
-                "ntp_server": ntp_servers[0] if ntp_servers else None
+                "ntp_server": ntp_servers if ntp_servers else None
             }
             # print("NTP setting:", ntp_setting)
             self.save_networkprotocol("NTP", ntp_setting)
-            set_ntp(ntp_ProtocolEnabled, ntp_setting["ntp_server"])
+            set_ntp()
             
             
         return self.NetworkProtocol_service(), 200
@@ -356,8 +356,8 @@ class RfManagersService(BaseService):
             API will return jsonify(message="Reset all to factory settings Successfully")
         """
         resp = WebAppAPIAdapter().reset_to_defaults(reset_type)
-        # if resp.status_code == HTTPStatus.OK.value:
-        #     reset_to_defaults()
+        if resp.status_code == HTTPStatus.OK.value:
+            reset_to_defaults()
         return jsonify(ProjResponseMessage(code=resp.status_code, message=resp.text).to_dict())
     
     def reset(self, reset_type: str):

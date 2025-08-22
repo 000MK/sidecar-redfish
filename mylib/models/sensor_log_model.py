@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from typing import Optional, Literal, Union, get_args
+from typing import Optional, Literal, Union, get_args, get_origin
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 class SensorLogBaseModel(BaseModel):
@@ -39,6 +39,12 @@ class SensorLogBaseModel(BaseModel):
         """
         @note: 
             get_args(typing.Optional[float]) => (<class 'float'>, <class 'NoneType'>)
+            get_args(Optional[float]) => (<class 'float'>, <class 'NoneType'>)
+            get_args(Optional[float]) => (<class 'str'>, <class 'float'>, <class 'NoneType'>)
+            get_args(Optional[Union[str, float]]) => (<class 'str'>, <class 'float'>, <class 'NoneType'>)
+            get_args(Optional[Union[str, int]]) => (<class 'str'>, <class 'int'>, <class 'NoneType'>)
+            get_args(Optional[Union[str, int, float]]) => (<class 'str'>, <class 'int'>, <class 'float'>, <class 'NoneType'>)
+            get_args(Optional[Union[float, any]]) => (<class 'float'>, <built-in function any>, <class 'NoneType'>)
         """
         if getattr(annotation, '__origin__', None) is Union:
             types = [t for t in get_args(annotation) if t is not type(None)]
@@ -73,6 +79,27 @@ class SensorLogBaseModel(BaseModel):
                     include=set(self.__class__.model_fields.keys()),
                     # exclude_none=True # For sensor log, we want to provide all fields
                 )
+    
+
+    @field_validator('*', mode='before')
+    @classmethod
+    def auto_clean(cls, v, info):
+        try:
+            field_type = cls.model_fields[info.field_name].annotation
+
+            if get_origin(field_type) is Union:
+                types = set(get_args(field_type))
+            else:
+                types = {field_type}
+
+            if float in types:
+                return float(v)
+            elif int in types:
+                return int(v)
+            else:
+                return v
+        except:
+            return None
 
 """
 依Pydantic V2的設計

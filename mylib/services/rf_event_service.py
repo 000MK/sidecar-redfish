@@ -16,7 +16,8 @@ from mylib.models.rf_event_service_model import RfEventServiceModel, RfEventSubs
 from mylib.models.rf_status_model import RfStatusModel
 from mylib.models.setting_model import SettingModel
 from mylib.models.setting_subscriptions_model import SubscriptionModel
-# from mylib.utils.ServerSentEvent import event_stream#, clear_subscribers
+# from mylib.protocol.ServerSentEvent import event_stream#, clear_subscribers
+from mylib.protocol.redfish import send_event_redfish
 from mylib.common.proj_error import ProjRedfishError, ProjRedfishErrorCode
 from load_env import redfish_info
 

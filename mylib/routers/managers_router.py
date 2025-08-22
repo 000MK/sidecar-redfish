@@ -90,16 +90,16 @@ ResetPostModel = managers_ns.model('ResetPostModel', {
 
 # managers/cdu model
 ManagersCDUPatch = managers_ns.model('ManagersCDUPatch', {
-    # 'DateTime': fields.String(
-    #     required=False,
-    #     description='The date and time of the system.',
-    #     example='2025-06-25T09:22:00Z+08:00'
-    # ),
-    # 'DateTimeLocalOffset': fields.String(
-    #     required=False,
-    #     description='The date and time of the system.',
-    #     example='+08:00'
-    # ),
+    'DateTime': fields.String(
+        required=False,
+        description='The date and time of the system.',
+        example='2025-06-25T09:22:00Z+08:00'
+    ),
+    'DateTimeLocalOffset': fields.String(
+        required=False,
+        description='The date and time of the system.',
+        example='+08:00'
+    ),
     'ServiceIdentification': fields.String(
         required=False, 
         description='The service identification.',
@@ -242,7 +242,7 @@ NetworkProtocolPatch = managers_ns.model('NetworkProtocolPatch', {
     # 'HTTPS': fields.Nested(protocol_commom_model, required=False, description='HTTPS setting'),
     # 'SSH':   fields.Nested(protocol_commom_model,   required=False, description='SSH setting'),
     'SNMP':  fields.Nested(snmp_patch,  required=False, description='SNMP setting'),
-    # 'NTP':   fields.Nested(ntp_patch,   required=False, description='NTP setting'),
+    'NTP':   fields.Nested(ntp_patch,   required=False, description='NTP setting'),
     # 'DHCP':  fields.Nested(protocol_commom_model,  required=False, description='DHCP setting'),
 })
 

@@ -2,46 +2,72 @@ import platform
 import subprocess
 import psutil
 import subprocess, threading, time, datetime
+from typing import Sequence
+from mylib.models.setting_model import SettingModel
+import ast
+
 #====================================================
 # set NTP
 # ===================================================
-def set_ntp(enable: bool, ntp_server: str):
+def set_ntp() -> dict:
     """
-    跨平台啓用或停用本機 NTP 同步。
-    :param enable: True=啓用, False=停用
-    [*] 目前僅支援 ntp.ubuntu.com
+    Ubuntu 22.04 專用，用 sudo 呼叫系統命令寫入 NTP 設定與重啟服務。
+    :param enable: True=啟用 NTP, False=停用
     """
-    os_name = platform.system()
-    if os_name == "Windows":
-        print("正在處理 Windows 系統的 NTP 設定...")
-        svc = psutil.win_service_get("W32Time")
-        if enable:
-            subprocess.run(["sc", "config", "W32Time", "start=", "auto"], check=True)
-            subprocess.run(["sc", "start",  "W32Time"],               check=True)
-
-            print("已啟用 Windows Time 服務並設為自動啟動")
-        else:
-            subprocess.run(["sc", "stop",   "W32Time"],               check=True)
-            subprocess.run(["sc", "config", "W32Time", "start=", "disabled"], check=True)
-            print("已停止並設為停用的 W32Time 服務")
-
-    elif os_name == "Linux":
-        print("正在處理 Linux 系統的 NTP 設定...")
-        mode = "true" if enable else "false"
-        # 使用 timedatectl 控制 systemd-timesyncd
-        subprocess.run(["/usr/bin/sudo", "timedatectl", "set-ntp", mode], check=True)
-        # 設定 NTP 伺服器
-        if ntp_server:
-            subprocess.run(["/usr/bin/sudo", "ntpdate", ntp_server], capture_output=True, text=True) # 對 ntpserver 進行一次同步
-            subprocess.run(["/usr/bin/sudo", "systemctl", "restart", "systemd-timesyncd"], check=True) 
-        subprocess.run(["/usr/bin/sudo", "hwclock", "--systohc"], check=True) # 更新硬體時鐘
-        print(f"timedatectl set-ntp {mode} 執行完成")
-        # subprocess.run(["timedatectl", "status"], check=True)
-         
-    else:
-        raise RuntimeError(f"不支援的作業系統：{os_name}")
+    db_ntp_enable = int(SettingModel().get_by_key("Managers.NTP.ProtocolEnabled").value)
+    print("db_ntp_enable:", db_ntp_enable)
+    enable = "True" if db_ntp_enable == 1 else "False"
+    print("enabled: ", enable)
+    # 轉換 ntp_server str to list
+    t_raw = SettingModel().get_by_key("Managers.NTP.NTPServer").value
     
+    ntp_servers = ast.literal_eval(t_raw) if isinstance(t_raw, str) else t_raw
+    print("yyyy:", ntp_servers)
+    
+    servers = [s for s in (ntp_servers or []) if s]
+    result = {
+        "ProtocolEnabled": bool(enable),
+        "NTPServers": servers,
+        "NetworkSuppliedServers": []
+    }
 
+    # 1) 建立 drop-in 目錄
+    subprocess.run(
+        ["/usr/bin/sudo", "mkdir", "-p", "/etc/systemd/timesyncd.conf.d"],
+        check=True
+    )
+
+    # 2) 寫入設定檔
+    ntp_head = "[Time]"
+    ntp_line = "NTP=" + " ".join(servers) if servers else "NTP="
+    ntp_fallback = "FallbackNTP="
+    conf_content = f"# Managed by Redfish NTP API\n{ntp_head}\n{ntp_line}\n{ntp_fallback}\n"
+    subprocess.run(
+        ["/usr/bin/sudo", "tee", "/etc/systemd/timesyncd.conf.d/zz-redfish-ntp.conf"],
+        input=conf_content.encode(),
+        check=True
+    )
+
+    # 3) 重啟 timesyncd
+    if enable:
+        subprocess.run(
+            ["/usr/bin/sudo", "systemctl", "restart", "systemd-timesyncd"],
+            check=True
+        )
+    
+    # 4) 啟用或停用 NTP 同步
+    subprocess.run(
+        ["/usr/bin/sudo", "timedatectl", "set-ntp", enable],
+        check=True
+    )
+    
+    # 5) 更新硬體時鐘（可選）
+    subprocess.run(
+        ["/usr/bin/sudo", "hwclock", "--systohc"],
+        check=False
+    )
+
+    return result
 #====================================================
 # network switch
 # ===================================================
